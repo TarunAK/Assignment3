@@ -145,8 +145,6 @@ int *Check(char department[12])
         }
         curr = curr->next;
     }
-    //tmp = realloc(tmp, i * sizeof(int));
-    //printf("%lu\n", sizeof(tmp) / sizeof(tmp[0]));
     return tmp;
 }
 
