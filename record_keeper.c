@@ -6,7 +6,6 @@
 #include <sys/msg.h>
 #include <errno.h>
 #include <math.h>
-//#include "db.h"
 #include "msgq.h"
 #define SID 5678
 #define CID 8765
@@ -15,15 +14,6 @@ data *head = NULL;
 data *end = NULL;
 static int count = 0;
 
-int getLength(char *s)
-{
-    int length = 0;
-    for (int i = 0; s[i] != '\0'; ++i)
-    {
-        ++length;
-    }
-    return length;
-}
 
 void Insert(char name[12], char department[12], int emp_num, int salary)
 {
@@ -188,17 +178,16 @@ void print_list(void)
 }
 
 message msgout;
+inout msgin;
 
 int main(void)
 {
     //data *head = NULL;
-    //message *msgin = malloc(sizeof(message));
-    //inout *msgout = malloc(sizeof(inout));
     int running = 1;
 
     msgout.msg_type = 0;
-    strcpy(msgout.msg.name, NULL);
-    strcpy(msgout.msg.department, NULL);
+    strcpy(msgout.msg.name, "NULL");
+    strcpy(msgout.msg.department, "NULL");
     msgout.msg.emp_num = 0;
     msgout.msg.salary = 0;
 
@@ -241,73 +230,68 @@ int main(void)
     while (running)
     {
         char temp[12];
-        //printf("Coming here\n");
 
-        if (msgrcv(msgid_ser, &msgout, sizeof(data), 0, 0) == -1)
+        printf("Waiting for client...\n");
+        if (msgrcv(msgid_ser, (void *)&msgout, sizeof(data), 0, 0) == -1)
         {
             perror("msgrcv");
             exit(1);
         }
-        //printf("Coming here\n");
 
-        //printf("%s\n", msgout.msg.name);
-        int a = 1;
-    //     switch (a)
-    //     {
-    //     case 1:
-    //         printf("MADE ITTTTTTT");
-    //         Insert(msgin->msg.name, msgin->msg.department, msgin->msg.emp_num, msgin->msg.salary);
-    //         break;
-    //     // case 2:
-    //     //     for (int i = 0; i < getLength(Check_name(msgin->msg.emp_num)); i++)
-    //     //     {
-    //     //         msgout->s[i] = Check_name(msgin->msg.emp_num)[i];
-    //     //     }
-    //     //     break;
-    //     // case 3:
-    //     //     for (int i = 0; i < getLength(Check_department(msgin->msg.emp_num)); i++)
-    //     //     {
-    //     //         msgout->s[i] = Check_department(msgin->msg.emp_num)[i];
-    //     //     }
-    //     //     break;
-    //     // case 4:
-    //     //     sprintf(temp, "%f", (double)Check_salary(msgin->msg.emp_num));
-    //     //     for (int i = 0; i < getLength(temp); i++)
-    //     //     {
-    //     //         msgout->s[i] = temp[i];
-    //     //     }
-    //     //     break;
-    //     // case 5:
-    //     //     //int *tmp = Check(msgin->msg.department);
-    //     //     break;
-    //     // case 6:
-    //     //     Delete(msgin->msg.emp_num);
-    //     //     break;
-    //     // default:
-    //     //     break;
-    //     }
+        printf("%ld\n", msgout.msg_type);
 
-    //     if (msgsnd(msgid_cli, msgout, sizeof(message), 0) == -1)
-    //     {
-    //         perror("msgsnd");
-    //         exit(1);
-    //     }
-    // }
+        if (count == 0)
+            printf("VAT\n");
 
-    // if (msgctl(msgid_cli, IPC_RMID, 0) == -1)
-    // {
-    //     fprintf(stderr, "msgctl(IPC_RMID) failed\n");
-    //     exit(EXIT_FAILURE);
-    // }
+        switch (msgout.msg_type)
+        {
+            case 1:
+                Insert(msgout.msg.name, msgout.msg.department, msgout.msg.emp_num, msgout.msg.salary);
+                break;
+            case 2:
+                printf("hallo ");
+                strcpy(msgin.s, Check_name(msgout.msg.emp_num));
+                break;
+            case 3:
+                strcpy(msgin.s, Check_department(msgout.msg.emp_num));
+                break;
+            case 4:
+                gcvt(Check_salary(msgout.msg.emp_num), 12, temp);
+                strcpy(msgin.s, temp);
+                break;
+            case 5:
+                //int *tmp = Check(msgin->msg.department);
+                break;
+            case 6:
+                gcvt(Delete(msgout.msg.emp_num), 12, temp);
+                strcpy(msgin.s, temp);
+                break;
+            default:
+                break;
+        }
 
-    // if (msgctl(msgid_ser, IPC_RMID, 0) == -1)
-    // {
-    //     fprintf(stderr, "msgctl(IPC_RMID) failed\n");
-    //     exit(EXIT_FAILURE);
+        if (msgout.msg_type != 1 && count != 0)
+        {
+            printf("Responding to client...");
+            if (msgsnd(msgid_cli, (void *)&msgin, strlen(msgin.s) + 1, 0) == -1)
+            {
+                perror("msgsnd");
+                exit(1);
+            }
+        } 
     }
 
-    //free(msgin);
-    //free(msgout);
+    if (msgctl(msgid_cli, IPC_RMID, 0) == -1)
+    {
+        fprintf(stderr, "msgctl(IPC_RMID) failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (msgctl(msgid_ser, IPC_RMID, 0) == -1)
+    {
+        fprintf(stderr, "msgctl(IPC_RMID) failed\n");
+        exit(EXIT_FAILURE);
+    }
 
     exit(EXIT_SUCCESS);
 }
