@@ -241,13 +241,11 @@ int main(void)
     {
         char temp[12];
 
-        if (msgrcv(msgid_ser, msgin, sizeof(data), msgin->msg_type, 0) == -1)
+        if (msgrcv(msgid_ser, (char *)&msgin, sizeof(data), msgin->msg_type, 0) == -1)
         {
             perror("msgrcv");
             exit(1);
         }
-
-        printf("%ld", msgin->msg_type);
 
         switch (msgin->msg_type)
         {

@@ -78,7 +78,7 @@ int main(void)
             msgout->msg.emp_num = emp_num;
         }
 
-        if (msgsnd(msgid_ser, (void *)msgout, sizeof(data), 0) == -1)
+        if (msgsnd(msgid_ser, (char *)&msgout, sizeof(data), 0) == -1)
         {
             perror("msgsnd");
             exit(1);
