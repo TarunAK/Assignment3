@@ -25,7 +25,7 @@ int getLength(char *s)
     return length;
 }
 
-void Insert(char *name, char *department, int emp_num, int salary)
+void Insert(char name[12], char department[12], int emp_num, int salary)
 {
     data *curr = head;
     while (curr != NULL)
@@ -43,15 +43,8 @@ void Insert(char *name, char *department, int emp_num, int salary)
         exit(-1);
     }
 
-    if (getLength(name) < 13)
-        new->name = name;
-    else
-        new->name = NULL;
-
-    if (getLength(department) < 13)
-        new->department = department;
-    else
-        new->department = NULL;
+    strcpy(new->name, name);
+    strcpy(new->department, department);
 
     if ((floor(log10(abs(emp_num))) + 1) < 13)
         new->emp_num = emp_num;
@@ -194,12 +187,20 @@ void print_list(void)
     free(curr);
 }
 
+message msgout;
+
 int main(void)
 {
     //data *head = NULL;
-    message *msgin = malloc(sizeof(message));
-    inout *msgout = malloc(sizeof(inout));
+    //message *msgin = malloc(sizeof(message));
+    //inout *msgout = malloc(sizeof(inout));
     int running = 1;
+
+    msgout.msg_type = 0;
+    strcpy(msgout.msg.name, NULL);
+    strcpy(msgout.msg.department, NULL);
+    msgout.msg.emp_num = 0;
+    msgout.msg.salary = 0;
 
     // Insert("Joe", "A", 935, 1231);
     // Insert("Abby", "A", 345, 8768);
@@ -240,66 +241,73 @@ int main(void)
     while (running)
     {
         char temp[12];
+        //printf("Coming here\n");
 
-        if (msgrcv(msgid_ser, (char *)&msgin, sizeof(data), msgin->msg_type, 0) == -1)
+        if (msgrcv(msgid_ser, &msgout, sizeof(data), 0, 0) == -1)
         {
             perror("msgrcv");
             exit(1);
         }
+        //printf("Coming here\n");
 
-        switch (msgin->msg_type)
-        {
-        case 1:
-            printf("MADE ITTTTTTT");
-            Insert(msgin->msg.name, msgin->msg.department, msgin->msg.emp_num, msgin->msg.salary);
-            break;
-        case 2:
-            for (int i = 0; i < getLength(Check_name(msgin->msg.emp_num)); i++)
-            {
-                msgout->s[i] = Check_name(msgin->msg.emp_num)[i];
-            }
-            break;
-        case 3:
-            for (int i = 0; i < getLength(Check_department(msgin->msg.emp_num)); i++)
-            {
-                msgout->s[i] = Check_department(msgin->msg.emp_num)[i];
-            }
-            break;
-        case 4:
-            sprintf(temp, "%f", (double)Check_salary(msgin->msg.emp_num));
-            for (int i = 0; i < getLength(temp); i++)
-            {
-                msgout->s[i] = temp[i];
-            }
-            break;
-        case 5:
-            //int *tmp = Check(msgin->msg.department);
-            break;
-        case 6:
-            Delete(msgin->msg.emp_num);
-            break;
-        default:
-            break;
-        }
+        //printf("%s\n", msgout.msg.name);
+        int a = 1;
+    //     switch (a)
+    //     {
+    //     case 1:
+    //         printf("MADE ITTTTTTT");
+    //         Insert(msgin->msg.name, msgin->msg.department, msgin->msg.emp_num, msgin->msg.salary);
+    //         break;
+    //     // case 2:
+    //     //     for (int i = 0; i < getLength(Check_name(msgin->msg.emp_num)); i++)
+    //     //     {
+    //     //         msgout->s[i] = Check_name(msgin->msg.emp_num)[i];
+    //     //     }
+    //     //     break;
+    //     // case 3:
+    //     //     for (int i = 0; i < getLength(Check_department(msgin->msg.emp_num)); i++)
+    //     //     {
+    //     //         msgout->s[i] = Check_department(msgin->msg.emp_num)[i];
+    //     //     }
+    //     //     break;
+    //     // case 4:
+    //     //     sprintf(temp, "%f", (double)Check_salary(msgin->msg.emp_num));
+    //     //     for (int i = 0; i < getLength(temp); i++)
+    //     //     {
+    //     //         msgout->s[i] = temp[i];
+    //     //     }
+    //     //     break;
+    //     // case 5:
+    //     //     //int *tmp = Check(msgin->msg.department);
+    //     //     break;
+    //     // case 6:
+    //     //     Delete(msgin->msg.emp_num);
+    //     //     break;
+    //     // default:
+    //     //     break;
+    //     }
 
-        if (msgsnd(msgid_cli, msgout, sizeof(message), 0) == -1)
-        {
-            perror("msgsnd");
-            exit(1);
-        }
+    //     if (msgsnd(msgid_cli, msgout, sizeof(message), 0) == -1)
+    //     {
+    //         perror("msgsnd");
+    //         exit(1);
+    //     }
+    // }
+
+    // if (msgctl(msgid_cli, IPC_RMID, 0) == -1)
+    // {
+    //     fprintf(stderr, "msgctl(IPC_RMID) failed\n");
+    //     exit(EXIT_FAILURE);
+    // }
+
+    // if (msgctl(msgid_ser, IPC_RMID, 0) == -1)
+    // {
+    //     fprintf(stderr, "msgctl(IPC_RMID) failed\n");
+    //     exit(EXIT_FAILURE);
     }
 
-    if (msgctl(msgid_cli, IPC_RMID, 0) == -1)
-    {
-        fprintf(stderr, "msgctl(IPC_RMID) failed\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if (msgctl(msgid_ser, IPC_RMID, 0) == -1)
-    {
-        fprintf(stderr, "msgctl(IPC_RMID) failed\n");
-        exit(EXIT_FAILURE);
-    }
+    //free(msgin);
+    //free(msgout);
 
     exit(EXIT_SUCCESS);
 }
