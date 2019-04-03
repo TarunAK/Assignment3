@@ -256,10 +256,7 @@ int main(void)
             exit(1);
         }
 
-        //printf("%ld\n", msgout.msg_type);
-
-        // if (count == 0)
-        //     printf("VAT\n");
+        msgin.msg_type = msgout.msg_type;
 
         switch (msgout.msg_type)
         {
@@ -268,7 +265,8 @@ int main(void)
                 break;
             case 2:
                 //printf("hallo\n");
-                strcpy(msgin.s, (const char*)Check_name(123));
+                
+                strcpy(msgin.s, Check_name(msgout.msg.emp_num));
                 //printf("\n%s\n", msgin.s);
                 break;
             case 3:
@@ -294,17 +292,21 @@ int main(void)
                 break;
         }
 
-        printf("\n%s\n", msgin.s);
-
         if (msgout.msg_type != 1 && msgout.msg_type != 6 && msgout.msg_type != 8 && count != 0)
         {
             printf("Responding to client...\n");
-            if (msgsnd(msgid_cli, (void *)&msgin, 12 * sizeof(char), 0) == -1)
+            if (msgsnd(msgid_cli, (void *)&msgin, sizeof(msgin.s), 0) == -1)
             {
                 perror("msgsnd");
                 exit(1);
             }
         } 
+    }
+
+    if (!running)
+    {
+        printf("Exiting\n");
+        exit(EXIT_SUCCESS);
     }
 
     if (msgctl(msgid_cli, IPC_RMID, 0) == -1)

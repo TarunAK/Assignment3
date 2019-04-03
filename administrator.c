@@ -56,7 +56,7 @@ int main(void)
         else if (strcmp(option, "Check Name\n") == 0)
         {
             msgout.msg_type = 2;
-            msgout.msg.emp_num = emp_num;
+            msgout.msg.emp_num = 123;
         }
         else if (strcmp(option, "Check Department\n") == 0)
         {
@@ -99,7 +99,7 @@ int main(void)
         printf("Waiting for server...\n");
         if (msgout.msg_type != 1 && msgout.msg_type != 6 && msgout.msg_type != 8)
         {
-            if (msgrcv(msgid_cli, (void *)&msgin, 12 * sizeof(char), 0, 0) == -1)
+            if (msgrcv(msgid_cli, (void *)&msgin, sizeof(msgin.s), 0, 0) == -1)
             {
                 perror("msgrcv");
                 exit(1);

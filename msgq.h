@@ -3,7 +3,7 @@
 #define MSGQ_H
 #define SID 5678
 #define CID 8765
-#define SIZE 12
+#define SIZE 100
 typedef struct msg_buffer { 
     long msg_type; 
     data msg;
