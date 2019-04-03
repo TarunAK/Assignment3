@@ -12,7 +12,7 @@ inout msgin;
 
 int main(void)
 {
-    char option[20];
+    int option;
     char name[12];
     char department[12];
     // strcpy(name, NULL);
@@ -43,45 +43,53 @@ int main(void)
 
     while (running)
     {
-        printf("Option: ");
-        fgets(option, 20, stdin);
-        if (strcmp(option, "Insert\n") == 0)
+        printf("(1) - Insert | (2) - Check_name | (3) - Check_department | (4) - Check_salary | (5) Check_employee_number | (6) - Check | (7) - Delete | (8) - Exit\n");
+        scanf("%d", &option);
+        if (option == 1)
         {
             msgout.msg_type = 1;
-            strcpy(msgout.msg.name, "name");
-            strcpy(msgout.msg.department, "department");
-            msgout.msg.emp_num = 123;
-            msgout.msg.salary = 999;
+            printf("Name: ");
+            scanf("%s", msgout.msg.name);
+            printf("Department: ");
+            scanf("%s", msgout.msg.department);
+            printf("Employee Number: ");
+            scanf("%d", &msgout.msg.emp_num);
+            printf("Salary: ");
+            scanf("%f", &msgout.msg.salary);
         }
-        else if (strcmp(option, "Check Name\n") == 0)
+        else if (option == 2)
         {
             msgout.msg_type = 2;
-            msgout.msg.emp_num = 123;
+            printf("Employee Number: ");
+            scanf("%d", &msgout.msg.emp_num);
         }
-        else if (strcmp(option, "Check Department\n") == 0)
+        else if (option == 3)
         {
             msgout.msg_type = 3;
-            msgout.msg.emp_num = emp_num;
+            printf("Employee Number: ");
+            scanf("%d", &msgout.msg.emp_num);
         }
-        else if (strcmp(option, "Check Salary\n") == 0)
+        else if (option == 4)
         {
             msgout.msg_type = 4;
-            msgout.msg.emp_num = emp_num;
+            printf("Employee Number: ");
+            scanf("%d", &msgout.msg.emp_num);
         }
-        else if (strcmp(option, "Check Employee Number\n") == 0)
+        else if (option == 5)
         {
             msgout.msg_type = 5;
-            strcpy(msgout.msg.name, name);
+            scanf("%s", msgout.msg.name);
         }
-        else if (strcmp(option, "Check\n") == 0)
+        else if (option == 6)
         {
             msgout.msg_type = 6;
-            strcpy(msgout.msg.department, department);
+            scanf("%s", msgout.msg.department);
         }
-        else if (strcmp(option, "Delete\n") == 0)
+        else if (option == 7)
         {
             msgout.msg_type = 7;
-            msgout.msg.emp_num = emp_num;
+            printf("Employee Number: ");
+            scanf("%d", &msgout.msg.emp_num);
         }
         else
         {

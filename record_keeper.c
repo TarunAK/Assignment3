@@ -264,10 +264,7 @@ int main(void)
                 Insert(msgout.msg.name, msgout.msg.department, msgout.msg.emp_num, msgout.msg.salary);
                 break;
             case 2:
-                //printf("hallo\n");
-                
                 strcpy(msgin.s, Check_name(msgout.msg.emp_num));
-                //printf("\n%s\n", msgin.s);
                 break;
             case 3:
                 strcpy(msgin.s, Check_department(msgout.msg.emp_num));
@@ -283,7 +280,7 @@ int main(void)
             case 6:
                 //int *tmp = Check(msgin->msg.department);
                 break;
-            case 7:
+            case 7:          
                 gcvt(Delete(msgout.msg.emp_num), 12, temp);
                 strcpy(msgin.s, temp);
                 break;
@@ -292,7 +289,7 @@ int main(void)
                 break;
         }
 
-        if (msgout.msg_type != 1 && msgout.msg_type != 6 && msgout.msg_type != 8 && count != 0)
+        if (msgout.msg_type != 1 && msgout.msg_type != 6 && msgout.msg_type != 8)
         {
             printf("Responding to client...\n");
             if (msgsnd(msgid_cli, (void *)&msgin, sizeof(msgin.s), 0) == -1)
