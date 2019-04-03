@@ -43,7 +43,7 @@ int main(void)
 
     while (running)
     {
-        printf("(1) - Insert | (2) - Check_name | (3) - Check_department | (4) - Check_salary | (5) Check_employee_number | (6) - Check | (7) - Delete | (8) - Exit\n");
+        printf("(1) - Insert | (2) - Check_name | (3) - Check_department | (4) - Check_salary | (5) Check_employee_number | (6) - Check | (7) - Delete | (8) - Exit\n> ");
         scanf("%d", &option);
         if (option == 1)
         {
@@ -97,14 +97,14 @@ int main(void)
             running = 0;
         }
 
-        printf("Sending request to server...\n");
+        //printf("Sending request to server...\n");
         if (msgsnd(msgid_ser, (void *)&msgout, sizeof(data), 0) == -1)
         {
             perror("msgsnd");
             exit(1);
         }
 
-        printf("Waiting for server...\n");
+        //printf("Waiting for server...\n");
         if (msgout.msg_type != 1 && msgout.msg_type != 6 && msgout.msg_type != 8)
         {
             if (msgrcv(msgid_cli, (void *)&msgin, sizeof(msgin.s), 0, 0) == -1)

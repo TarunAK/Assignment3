@@ -249,7 +249,7 @@ int main(void)
     {
         char temp[12];
 
-        printf("Waiting for client...\n");
+        //printf("Waiting for client...\n");
         if (msgrcv(msgid_ser, (void *)&msgout, sizeof(data), 0, 0) == -1)
         {
             perror("msgrcv");
@@ -289,9 +289,12 @@ int main(void)
                 break;
         }
 
+        system("clear");
+        print_list();
+
         if (msgout.msg_type != 1 && msgout.msg_type != 6 && msgout.msg_type != 8)
         {
-            printf("Responding to client...\n");
+            //printf("Responding to client...\n");
             if (msgsnd(msgid_cli, (void *)&msgin, sizeof(msgin.s), 0) == -1)
             {
                 perror("msgsnd");
