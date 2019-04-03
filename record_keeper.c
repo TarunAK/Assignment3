@@ -67,6 +67,7 @@ char *Check_name(int emp_num)
     {
         if (curr->emp_num == emp_num)
             return curr->name;
+        curr = curr->next;
     }
     free(curr);
     return NULL;
@@ -79,6 +80,7 @@ char *Check_department(int emp_num)
     {
         if (curr->emp_num == emp_num)
             return curr->department;
+        curr = curr->next;
     }
     free(curr);
     return NULL;
@@ -91,12 +93,26 @@ int Check_salary(int emp_num)
     {
         if (curr->emp_num == emp_num)
             return curr->salary;
+        curr = curr->next;
     }
     free(curr);
     return -1;
 }
 
-int *Check(char *department)
+int Check_employee_number(char name[12])
+{
+    data *curr = head;
+    while (curr != NULL)
+    {
+        if (strcmp(curr->name, name) == 0)
+            return curr->emp_num;
+        curr = curr->next;
+    }
+    free(curr);
+    return -1;
+}
+
+int *Check(char department[12])
 {
     data *curr = head;
     printf("%d\n", count);
@@ -185,11 +201,11 @@ int main(void)
     //data *head = NULL;
     int running = 1;
 
-    msgout.msg_type = 0;
-    strcpy(msgout.msg.name, "NULL");
-    strcpy(msgout.msg.department, "NULL");
-    msgout.msg.emp_num = 0;
-    msgout.msg.salary = 0;
+    // msgout.msg_type = 0;
+    // strcpy(msgout.msg.name, "NULL");
+    // strcpy(msgout.msg.department, "NULL");
+    // msgout.msg.emp_num = 0;
+    // msgout.msg.salary = 0;
 
     // Insert("Joe", "A", 935, 1231);
     // Insert("Abby", "A", 345, 8768);
@@ -201,7 +217,9 @@ int main(void)
     // printf("\n");
     // //printf("%d\n", Delete(3451));
     // print_list();
+    // printf("%d\n", Check_employee_number("Dan"));
     // printf("%d\n", count);
+    
 
     // int *checked = Check("A");
     // //int len = 12;
@@ -238,10 +256,10 @@ int main(void)
             exit(1);
         }
 
-        printf("%ld\n", msgout.msg_type);
+        //printf("%ld\n", msgout.msg_type);
 
-        if (count == 0)
-            printf("VAT\n");
+        // if (count == 0)
+        //     printf("VAT\n");
 
         switch (msgout.msg_type)
         {
@@ -249,8 +267,9 @@ int main(void)
                 Insert(msgout.msg.name, msgout.msg.department, msgout.msg.emp_num, msgout.msg.salary);
                 break;
             case 2:
-                printf("hallo ");
-                strcpy(msgin.s, Check_name(msgout.msg.emp_num));
+                //printf("hallo\n");
+                strcpy(msgin.s, (const char*)Check_name(123));
+                //printf("\n%s\n", msgin.s);
                 break;
             case 3:
                 strcpy(msgin.s, Check_department(msgout.msg.emp_num));
@@ -260,20 +279,27 @@ int main(void)
                 strcpy(msgin.s, temp);
                 break;
             case 5:
-                //int *tmp = Check(msgin->msg.department);
+                gcvt(Check_employee_number(msgout.msg.name), 12, temp);
+                strcpy(msgin.s, temp);
                 break;
             case 6:
+                //int *tmp = Check(msgin->msg.department);
+                break;
+            case 7:
                 gcvt(Delete(msgout.msg.emp_num), 12, temp);
                 strcpy(msgin.s, temp);
                 break;
             default:
+                running = 0;
                 break;
         }
 
-        if (msgout.msg_type != 1 && count != 0)
+        printf("\n%s\n", msgin.s);
+
+        if (msgout.msg_type != 1 && msgout.msg_type != 6 && msgout.msg_type != 8 && count != 0)
         {
-            printf("Responding to client...");
-            if (msgsnd(msgid_cli, (void *)&msgin, strlen(msgin.s) + 1, 0) == -1)
+            printf("Responding to client...\n");
+            if (msgsnd(msgid_cli, (void *)&msgin, 12 * sizeof(char), 0) == -1)
             {
                 perror("msgsnd");
                 exit(1);

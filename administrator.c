@@ -68,26 +68,38 @@ int main(void)
             msgout.msg_type = 4;
             msgout.msg.emp_num = emp_num;
         }
-        else if (strcmp(option, "Check\n") == 0)
+        else if (strcmp(option, "Check Employee Number\n") == 0)
         {
             msgout.msg_type = 5;
+            strcpy(msgout.msg.name, name);
+        }
+        else if (strcmp(option, "Check\n") == 0)
+        {
+            msgout.msg_type = 6;
             strcpy(msgout.msg.department, department);
         }
         else if (strcmp(option, "Delete\n") == 0)
         {
-            msgout.msg_type = 6;
+            msgout.msg_type = 7;
             msgout.msg.emp_num = emp_num;
         }
+        else
+        {
+            msgout.msg_type = 8;
+            running = 0;
+        }
 
+        printf("Sending request to server...\n");
         if (msgsnd(msgid_ser, (void *)&msgout, sizeof(data), 0) == -1)
         {
             perror("msgsnd");
             exit(1);
         }
 
-        if (msgout.msg_type != 1)
+        printf("Waiting for server...\n");
+        if (msgout.msg_type != 1 && msgout.msg_type != 6 && msgout.msg_type != 8)
         {
-            if (msgrcv(msgid_cli, (void *)&msgin, strlen(msgin.s) + 1, 0, 0) == -1)
+            if (msgrcv(msgid_cli, (void *)&msgin, 12 * sizeof(char), 0, 0) == -1)
             {
                 perror("msgrcv");
                 exit(1);
@@ -95,15 +107,14 @@ int main(void)
             printf("%s\n", msgin.s);
         }
     }
-
-    printf("Sending request to server...\n");
+    
     if (msgctl(msgid_cli, IPC_RMID, 0) == -1)
     {
         fprintf(stderr, "msgctl(IPC_RMID) failed\n");
         exit(EXIT_FAILURE);
     }
 
-    printf("Waiting for server...\n");
+    
     if (msgctl(msgid_ser, IPC_RMID, 0) == -1)
     {
         fprintf(stderr, "msgctl(IPC_RMID) failed\n");
