@@ -296,7 +296,6 @@ int main(void)
                     strcpy(str[i], c);
                 }
                 strcpy(msgin.s, (const char*)str);
-                //int *tmp = Check(msgin->msg.department);
                 break;
             case 7:          
                 gcvt(Delete(msgout.msg.emp_num), 12, temp);
